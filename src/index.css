@@ -1294,22 +1294,27 @@ button:disabled {
   transition: width 0.4s ease;
 }
 
+/* Columns follow the card's own width (not the screen's), so the grid never overflows its card. */
+.week-progress {
+  container-type: inline-size;
+}
+
 .week-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: var(--space-2);
 }
 
-@media (min-width: 480px) and (max-width: 767px), (min-width: 1100px) {
+@container (min-width: 600px) {
   .week-grid {
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
   }
 }
 
 .week-chip {
   width: 100%;
-  aspect-ratio: 1 / 1.15;
-  min-height: 48px;
+  min-width: 0;
+  height: 56px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1793,7 +1798,7 @@ button:disabled {
 
 .set-inputs {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
   gap: var(--space-2);
 }
 
@@ -1801,12 +1806,16 @@ button:disabled {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .set-input__label {
   font-size: 0.75rem;
   font-weight: 650;
   color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .set-input__field {
@@ -1815,7 +1824,6 @@ button:disabled {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--surface);
-  padding-right: var(--space-2);
 }
 
 .set-input__field:focus-within {
@@ -1829,10 +1837,19 @@ button:disabled {
   min-height: 44px;
   border: 0;
   background: transparent;
-  padding: 0 var(--space-2);
-  font-size: 1.0625rem;
+  padding: 0 var(--space-3);
+  font-size: 1.125rem;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
+  /* Browser spin arrows steal width from the digits; typing or the phone keypad is used instead. */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.set-input input::-webkit-inner-spin-button,
+.set-input input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .set-input input:focus-visible {
@@ -1840,9 +1857,7 @@ button:disabled {
 }
 
 .set-input__unit {
-  font-size: 0.6875rem;
-  color: var(--muted);
-  white-space: nowrap;
+  font-weight: 500;
 }
 
 .exercise__actions {

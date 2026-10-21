@@ -109,7 +109,9 @@ export function WorkoutExercise({ index, exercise, draft, onChange, onRest, onHo
           <div className="set-inputs">
             {draft.values.map((v, i) => (
               <label key={i} className="set-input">
-                <span className="set-input__label">Set {i + 1}</span>
+                <span className="set-input__label">
+                  Set {i + 1} <span className="set-input__unit">· {unitShort(exercise)}</span>
+                </span>
                 <span className="set-input__field">
                   <input
                     type="number"
@@ -121,7 +123,6 @@ export function WorkoutExercise({ index, exercise, draft, onChange, onRest, onHo
                     onChange={(e) => setValue(i, e.target.value)}
                     aria-label={`${exercise.name} set ${i + 1}, ${exercise.unit}`}
                   />
-                  <span className="set-input__unit">{unitShort(exercise)}</span>
                 </span>
               </label>
             ))}
