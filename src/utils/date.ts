@@ -55,12 +55,19 @@ export function dayOfWeek(value: LocalDate): number {
   return parseLocalDate(value).getDay();
 }
 
+/** The Monday on or before `date`. */
+export function mondayOf(date: LocalDate): LocalDate {
+  const dow = dayOfWeek(date);
+  return addDays(date, dow === 0 ? -6 : 1 - dow);
+}
+
 /**
- * Unclamped plan week for a date: week 1 starts on the plan start date.
- * Returns 0 or less for dates before the plan started.
+ * Unclamped plan week for a date. Plan weeks run Monday–Sunday, matching the weekly
+ * schedule (Mon A · Wed B · Fri A/B); week 1 is the Monday–Sunday week containing the
+ * plan start date. Returns 0 or less for earlier weeks.
  */
 export function planWeekOf(date: LocalDate, planStartDate: LocalDate): number {
-  return Math.floor(daysBetween(planStartDate, date) / 7) + 1;
+  return Math.floor(daysBetween(mondayOf(planStartDate), date) / 7) + 1;
 }
 
 /** Current plan week, clamped to 1..12. Advances with calendar days, not with workouts done. */
@@ -70,14 +77,13 @@ export function currentPlanWeek(todayDate: LocalDate, planStartDate: LocalDate):
 }
 
 export function planWeekRange(week: number, planStartDate: LocalDate): { start: LocalDate; end: LocalDate } {
-  const start = addDays(planStartDate, (week - 1) * 7);
+  const start = addDays(mondayOf(planStartDate), (week - 1) * 7);
   return { start, end: addDays(start, 6) };
 }
 
 /** Monday-start calendar week containing `date`. */
 export function calendarWeekDates(date: LocalDate): LocalDate[] {
-  const dow = dayOfWeek(date);
-  const monday = addDays(date, dow === 0 ? -6 : 1 - dow);
+  const monday = mondayOf(date);
   return Array.from({ length: 7 }, (_, i) => addDays(monday, i));
 }
 

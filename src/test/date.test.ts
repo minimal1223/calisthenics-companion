@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addDays, calendarWeekDates, currentPlanWeek, daysBetween, formatClock, isValidLocalDate, planWeekOf, toLocalDate } from '../utils/date';
+import { addDays, calendarWeekDates, currentPlanWeek, daysBetween, formatClock, isValidLocalDate, planWeekOf, planWeekRange, toLocalDate } from '../utils/date';
 
 describe('local dates', () => {
   it('formats from local components, not UTC', () => {
@@ -45,6 +45,15 @@ describe('plan week', () => {
     expect(currentPlanWeek('2026-10-11', start)).toBe(1);
     expect(currentPlanWeek('2026-10-12', start)).toBe(2);
     expect(currentPlanWeek('2026-10-19', start)).toBe(3);
+  });
+
+  it('runs plan weeks Monday–Sunday even when the plan starts mid-week', () => {
+    const tuesdayStart = '2026-10-20';
+    expect(planWeekOf('2026-10-19', tuesdayStart)).toBe(1); // Monday of the start week
+    expect(planWeekOf('2026-10-25', tuesdayStart)).toBe(1); // Sunday
+    expect(planWeekOf('2026-10-26', tuesdayStart)).toBe(2); // next Monday
+    expect(planWeekOf('2026-11-01', tuesdayStart)).toBe(2);
+    expect(planWeekRange(2, tuesdayStart)).toEqual({ start: '2026-10-26', end: '2026-11-01' });
   });
 
   it('clamps to 1..12', () => {

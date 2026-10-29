@@ -52,7 +52,7 @@ Each address the app is opened from keeps its own separate data. Data saved on t
 
 ### How the numbers are calculated
 
-- **Plan week**: `floor(daysBetween(planStartDate, today) / 7) + 1`, clamped to 1–12, using local calendar dates. The week advances with the calendar. It never advances because you completed workouts, and it never applies penalties.
+- **Plan week**: plan weeks run Monday–Sunday, matching the weekly schedule. Week 1 is the Monday–Sunday week that contains the plan start date: `floor(daysBetween(mondayOf(planStartDate), today) / 7) + 1`, clamped to 1–12, using local calendar dates. The week advances with the calendar. It never advances because you completed workouts, and it never applies penalties.
 - **Weekly target**: completed Workout A or B sessions in the current plan week, out of 3. Minimum sessions are not included.
 - **Week status**: "Target met" requires 3 recorded strength sessions. A past week is never marked complete just because its dates have passed.
 - **Active streak**: the number of consecutive local calendar days with at least one logged activity (a strength, minimum, or mobility session). The count ends today if you have logged something today; otherwise it ends yesterday, so a day you haven't logged yet doesn't reset it early. Missing a day resets the count, and nothing else is lost.

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { AppData, WorkoutSession } from '../types';
 import { createEmptyData } from '../utils/validation';
 import { activeStreak, activityDates, nextInRotation, personalRecords, summarizeWeek, weekStatus } from '../utils/stats';
+import { planWeekOf } from '../utils/date';
 
 function session(date: string, workoutType: WorkoutSession['workoutType'], extra: Partial<WorkoutSession> = {}): WorkoutSession {
   return {
@@ -85,5 +86,15 @@ describe('rotation and records', () => {
     ]);
     expect(records.find((r) => r.exerciseId === 'pushups')).toMatchObject({ bestSet: 9, unit: 'reps', date: '2026-10-09' });
     expect(records.find((r) => r.exerciseId === 'plank')).toMatchObject({ bestSet: 25, unit: 'seconds' });
+  });
+});
+
+describe('weekly target counts every workout in the Monday–Sunday week', () => {
+  it('counts a Monday workout and a late Workout B together (plan started on a Tuesday)', () => {
+    const data = dataWith({ workoutSessions: [session('2026-10-26', 'A'), session('2026-10-29', 'B')] });
+    data.settings.planStartDate = '2026-10-20';
+    const week = planWeekOf('2026-10-29', data.settings.planStartDate);
+    expect(week).toBe(2);
+    expect(summarizeWeek(data, week).strength).toHaveLength(2);
   });
 });
